@@ -525,7 +525,7 @@ enum boot_device get_boot_device(void)
 
 	switch (dev_rsrc) {
 	case SC_R_SDHC_0:
-		boot_dev = MMC1_BOOT;
+		boot_dev = SD1_BOOT;
 		break;
 	case SC_R_SDHC_1:
 		boot_dev = SD2_BOOT;

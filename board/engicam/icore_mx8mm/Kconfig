@@ -1,0 +1,14 @@
+if TARGET_ICORE_MX8MM
+
+config SYS_BOARD
+	default "icore_mx8mm"
+
+config SYS_VENDOR
+	default "engicam"
+
+config SYS_CONFIG_NAME
+	default "icore_mx8mm"
+
+source "board/freescale/common/Kconfig"
+
+endif
