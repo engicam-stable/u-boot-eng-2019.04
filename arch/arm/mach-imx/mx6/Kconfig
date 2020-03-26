@@ -506,6 +506,15 @@ config TARGET_MX6UL_14X14_LPDDR2_ARM2
 	select DM
 	select DM_THERMAL
 	imply CMD_DM
+	
+	config TARGET_MX6UL_14X14_LPDDR2_ARM2
+	bool "mx6ul_14x14_lpddr2_arm2"
+	select BOARD_LATE_INIT
+	select MX6UL
+	select DM
+	select DM_THERMAL
+	imply CMD_DM
+
 
 config TARGET_MX6UL_ENGICAM
 	bool "Support Engicam GEAM6UL/Is.IoT"
@@ -548,6 +557,14 @@ config TARGET_MX6ULL_14X14_EVK
 	select MX6ULL
 	imply CMD_DM
 
+config TARGET_MICROGEA_MX6ULL
+	bool "Support Engicam Microgea"
+	select BOARD_LATE_INIT
+	select DM
+	select DM_THERMAL
+	select MX6ULL
+	imply CMD_DM	
+	
 config TARGET_NITROGEN6X
 	bool "nitrogen6x"
 	imply USB_ETHER_ASIX
@@ -716,6 +733,7 @@ source "board/el/el6x/Kconfig"
 source "board/embest/mx6boards/Kconfig"
 source "board/engicam/imx6q/Kconfig"
 source "board/engicam/imx6ul/Kconfig"
+source "board/engicam/microgea-mx6ull/Kconfig"
 source "board/freescale/mx6qarm2/Kconfig"
 source "board/freescale/mx6memcal/Kconfig"
 source "board/freescale/mx6sabreauto/Kconfig"

@@ -578,6 +578,7 @@ dtb-$(CONFIG_MX6UL) += \
 	imx6ul-pico-pi.dtb
 
 dtb-$(CONFIG_MX6ULL) += \
+	microgea-mx6ull.dtb \
 	imx6ull-14x14-ddr3-arm2.dtb \
 	imx6ull-14x14-ddr3-arm2-epdc.dtb \
 	imx6ull-14x14-ddr3-arm2-emmc.dtb \
