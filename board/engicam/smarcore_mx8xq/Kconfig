@@ -1,0 +1,14 @@
+if TARGET_SMARCORE_MX8XQ
+
+config SYS_BOARD
+	default "smarcore_mx8xq"
+
+config SYS_VENDOR
+	default "engicam"
+
+config SYS_CONFIG_NAME
+	default "smarcore_mx8xq"
+
+source "board/freescale/common/Kconfig"
+
+endif
