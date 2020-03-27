@@ -110,6 +110,12 @@ config TARGET_IMX8DXL_PHANTOM_MEK
 	select BOARD_LATE_INIT
 	select IMX8QXP
 
+config TARGET_SMARCORE_MX8XQ
+	bool "Support smarcore mx8xq"
+	select BOARD_LATE_INIT
+	select SUPPORT_SPL
+	select IMX8QXP
+
 endchoice
 
 source "board/freescale/imx8qxp_mek/Kconfig"
@@ -117,5 +123,6 @@ source "board/freescale/imx8qm_mek/Kconfig"
 source "board/freescale/imx8qxp_arm2/Kconfig"
 source "board/freescale/imx8qm_arm2/Kconfig"
 source "board/freescale/imx8dxl_phantom_mek/Kconfig"
+source "board/engicam/smarcore_mx8xq/Kconfig"
 
 endif
