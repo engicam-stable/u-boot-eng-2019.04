@@ -67,123 +67,34 @@
 #define CONFIG_SERIAL_TAG
 #define CONFIG_FASTBOOT_USB_DEV 0
 
-#define CONFIG_MFG_ENV_SETTINGS \
-	CONFIG_MFG_ENV_SETTINGS_DEFAULT \
-	"initrd_addr=0x86800000\0" \
-	"initrd_high=0xffffffff\0" \
-	"emmc_dev=1\0"\
-	"emmc_ack=1\0"\
-	"sd_dev=1\0" \
-	"mtdparts=" MFG_NAND_PARTITION \
-	"\0"\
+#define BOOTCMD_FROM_NET	 "run bootargs_net; tftp uImage; tftp ${fdt_addr} uImage.dtb; bootz ${loadaddr} - ${fdt_addr} \0"
 
-#if defined(CONFIG_NAND_BOOT)
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	CONFIG_MFG_ENV_SETTINGS \
-	TEE_ENV \
-	"fdt_addr=0x83000000\0" \
-	"fdt_high=0xffffffff\0"	  \
-	"console=ttymxc0\0" \
-	"bootargs=console=ttymxc0,115200 ubi.mtd=4 "  \
-		"root=ubi0:rootfs rootfstype=ubifs "		     \
-		BOOTARGS_CMA_SIZE \
-		MFG_NAND_PARTITION \
-		"\0" \
-	"bootcmd=nand read ${loadaddr} 0x4000000 0x800000;"\
-		"nand read ${fdt_addr} 0x5000000 0x100000;"\
-        "bootz ${loadaddr} - ${fdt_addr};\0" 
+#ifdef CONFIG_NAND_BOOT
+	#define BOOTCMD		"bootcmd=run bootcmd_ubi\0"
 #else
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	CONFIG_MFG_ENV_SETTINGS \
-	TEE_ENV \
-	"script=boot.scr\0" \
-	"image=zImage\0" \
-	"console=ttymxc0\0" \
-	"fdt_high=0xffffffff\0" \
-	"initrd_high=0xffffffff\0" \
-	"fdt_file=microgea-mx6ull.dtb\0" \
-	"fdt_addr=0x83000000\0" \
-	"boot_fdt=try\0" \
-	"ip_dyn=yes\0" \
-	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
-	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
-	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
-	"mmcautodetect=yes\0" \
-	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		BOOTARGS_CMA_SIZE \
-		"root=${mmcroot}\0" \
-	"loadbootscript=" \
-		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
-	"bootscript=echo Running bootscript from mmc ...; " \
-		"source\0" \
-	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
-	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
-	"loadtee=fatload mmc ${mmcdev}:${mmcpart} ${tee_addr} ${tee_file}\0" \
-	"mmcboot=echo Booting from mmc ...; " \
-		"run mmcargs; " \
-		"if test ${tee} = yes; then " \
-			"run loadfdt; run loadtee; bootm ${tee_addr} - ${fdt_addr}; " \
-		"else " \
-			"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-				"if run loadfdt; then " \
-					"bootz ${loadaddr} - ${fdt_addr}; " \
-				"else " \
-					"if test ${boot_fdt} = try; then " \
-						"bootz; " \
-					"else " \
-						"echo WARN: Cannot load the DT; " \
-					"fi; " \
-				"fi; " \
-			"else " \
-				"bootz; " \
-			"fi; " \
-		"fi;\0" \
-	"netargs=setenv bootargs console=${console},${baudrate} " \
-		BOOTARGS_CMA_SIZE \
-		"root=/dev/nfs " \
-	"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
-		"netboot=echo Booting from net ...; " \
-		"${usb_net_cmd}; " \
-		"run netargs; " \
-		"if test ${ip_dyn} = yes; then " \
-			"setenv get_cmd dhcp; " \
-		"else " \
-			"setenv get_cmd tftp; " \
-		"fi; " \
-		"${get_cmd} ${image}; " \
-		"if test ${tee} = yes; then " \
-			"${get_cmd} ${tee_addr} ${tee_file}; " \
-			"${get_cmd} ${fdt_addr} ${fdt_file}; " \
-			"bootm ${tee_addr} - ${fdt_addr}; " \
-		"else " \
-			"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-				"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
-					"bootz ${loadaddr} - ${fdt_addr}; " \
-				"else " \
-					"if test ${boot_fdt} = try; then " \
-						"bootz; " \
-					"else " \
-						"echo WARN: Cannot load the DT; " \
-					"fi; " \
-				"fi; " \
-			"else " \
-				"bootz; " \
-			"fi; " \
-		"fi;\0" \
-
-#define CONFIG_BOOTCOMMAND \
-	   "mmc dev ${mmcdev};" \
-	   "mmc dev ${mmcdev}; if mmc rescan; then " \
-		   "if run loadbootscript; then " \
-			   "run bootscript; " \
-		   "else " \
-			   "if run loadimage; then " \
-				   "run mmcboot; " \
-			   "else run netboot; " \
-			   "fi; " \
-		   "fi; " \
-	   "else run netboot; fi"
+	#define BOOTCMD		"bootcmd=run bootcmd_mmc\0"
 #endif
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+		"bootargs_base=setenv bootargs_tmp console=ttymxc0,115200 cma=16M\0"			\
+		"bootargs_mmc=run bootargs_base; setenv bootargs ${bootargs_tmp} ${mtdparts} root=/dev/mmcblk${mmcdev}p2 rootwait rw\0" \
+		"bootcmd_mmc=setenv mmcdev 0; run bootargs_mmc; run loadfdt; run loadzImage; bootz ${loadaddr} - ${fdt_addr}\0"	\
+		"bootargs_net=run bootargs_base; setenv bootargs ${bootargs_tmp} root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+		"bootcmd_net="   "run bootargs_net; tftp uImage; tftp ${fdt_addr} uImage.dtb; bootz ${loadaddr} - ${fdt_addr}\0"	\
+        "bootargs_ubi=run bootargs_base; setenv bootargs ${bootargs_tmp} ${mtdparts} ubi.mtd=3 root=ubi0:rootfs rootfstype=ubifs\0"	\
+        "bootcmd_ubi=run bootargs_ubi;nand read ${loadaddr} 0x400000 0x700000;nand read ${fdt_addr} 0xc00000 0x100000;bootz ${loadaddr} - ${fdt_addr}\0" \
+		BOOTCMD	\
+		"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+		"mmcpart=1\0"					\
+		"loadzImage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} zImage;\0"	\
+		"mtdparts=mtdparts=gpmi-nand:4m(boot),8m(kernel),1m(dtb),-(rootfs)\0" \
+		"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" 	\
+		"netdev=eth0\0" \
+		"ethprime=FEC0\0" \
+		"nfsroot=/nfs_icore\0"	\
+		"fdt_addr=0x83000000\0"	\
+		"fdt_high=0xffffffff\0"
+
 
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_MEMTEST_START	0x80000000
