@@ -21,15 +21,7 @@
 #endif
 #endif
 
-#ifdef CONFIG_TARGET_MX6ULL_9X9_EVK
-#define PHYS_SDRAM_SIZE		SZ_256M
-#define BOOTARGS_CMA_SIZE   "cma=96M "
-#else
-#define PHYS_SDRAM_SIZE		SZ_512M
-#define BOOTARGS_CMA_SIZE   ""
-/* DCDC used on 14x14 EVK, no PMIC */
 #undef CONFIG_LDO_BYPASS_CHECK
-#endif
 
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		(16 * SZ_1M)
@@ -61,8 +53,6 @@
 
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
 
-#define MFG_NAND_PARTITION "mtdparts=gpmi-nand:4m(boot),8m(kernel),1m(dtb),-(rootfs)"
-
 #define CONFIG_CMD_READ
 #define CONFIG_SERIAL_TAG
 #define CONFIG_FASTBOOT_USB_DEV 0
@@ -82,7 +72,7 @@
 		"bootargs_net=run bootargs_base; setenv bootargs ${bootargs_tmp} root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
 		"bootcmd_net="   "run bootargs_net; tftp uImage; tftp ${fdt_addr} uImage.dtb; bootz ${loadaddr} - ${fdt_addr}\0"	\
         "bootargs_ubi=run bootargs_base; setenv bootargs ${bootargs_tmp} ${mtdparts} ubi.mtd=3 root=ubi0:rootfs rootfstype=ubifs\0"	\
-        "bootcmd_ubi=run bootargs_ubi;nand read ${loadaddr} 0x400000 0x700000;nand read ${fdt_addr} 0xc00000 0x100000;bootz ${loadaddr} - ${fdt_addr}\0" \
+        "bootcmd_ubi=run bootargs_ubi;nand read ${loadaddr} 0x400000 0x800000;nand read ${fdt_addr} 0xc00000 0x100000;bootz ${loadaddr} - ${fdt_addr}\0" \
 		BOOTCMD	\
 		"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
 		"mmcpart=1\0"					\
@@ -134,6 +124,7 @@
 #define CONFIG_SYS_NAND_BASE		0x40000000
 #define CONFIG_SYS_NAND_5_ADDR_CYCLE
 #define CONFIG_SYS_NAND_ONFI_DETECTION
+
 /* DMA stuff, needed for GPMI/MXS NAND support */
 #endif
 
@@ -162,16 +153,28 @@
 #define CONFIG_USB_MAX_CONTROLLER_COUNT 2
 #endif
 
-#ifdef CONFIG_FEC_MXC
-#define CONFIG_CMD_MII
 
+#ifdef CONFIG_DM_ETH
+#define CONFIG_CMD_MII
+#define CONFIG_FEC_MXC
 #define CONFIG_FEC_ENET_DEV 0
+
+#if (CONFIG_FEC_ENET_DEV == 0)
 #define IMX_FEC_BASE			ENET_BASE_ADDR
 #define CONFIG_FEC_MXC_PHYADDR          0x0
 #define CONFIG_FEC_XCV_TYPE             RMII
+#ifdef CONFIG_DM_ETH
+#define CONFIG_ETHPRIME			"eth0"
+#else
+#define CONFIG_ETHPRIME			"FEC0"
+#endif
 
 
 #define CONFIG_FEC_MXC_MDIO_BASE ENET_BASE_ADDR
+#endif
+
+#define CONFIG_MODULE_FUSE
+#define CONFIG_OF_SYSTEM_SETUP
 #endif
 
 #define CONFIG_IMX_THERMAL
