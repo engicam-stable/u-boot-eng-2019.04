@@ -242,10 +242,57 @@ int board_ehci_hcd_init(int port)
 
 
 #ifdef CONFIG_FEC_MXC
+/*
+ * pin conflicts for fec1 and fec2, GPIO1_IO06 and GPIO1_IO07 can only
+ * be used for ENET1 or ENET2, cannot be used for both.
+ */
+static iomux_v3_cfg_t const fec1_pads[] = {
+	MX6_PAD_GPIO1_IO06__ENET1_MDIO | MUX_PAD_CTRL(MDIO_PAD_CTRL),
+	MX6_PAD_GPIO1_IO07__ENET1_MDC | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET1_TX_DATA0__ENET1_TDATA00 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET1_TX_DATA1__ENET1_TDATA01 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET1_TX_EN__ENET1_TX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET1_TX_CLK__ENET1_REF_CLK1 | MUX_PAD_CTRL(ENET_CLK_PAD_CTRL),
+	MX6_PAD_ENET1_RX_DATA0__ENET1_RDATA00 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET1_RX_DATA1__ENET1_RDATA01 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET1_RX_EN__ENET1_RX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_SNVS_TAMPER9__GPIO5_IO09 | MUX_PAD_CTRL(ENET_PAD_CTRL),	/* ENET Reset */
+};
+
+static iomux_v3_cfg_t const fec2_pads[] = {
+/*
+	MX6_PAD_GPIO1_IO06__ENET2_MDIO | MUX_PAD_CTRL(MDIO_PAD_CTRL),
+	MX6_PAD_GPIO1_IO07__ENET2_MDC | MUX_PAD_CTRL(ENET_PAD_CTRL),
+*/
+	MX6_PAD_ENET2_TX_DATA0__ENET2_TDATA00 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET2_TX_DATA1__ENET2_TDATA01 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET2_TX_EN__ENET2_TX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
+
+	//MX6_PAD_ENET2_RX_DATA0__ENET2_RDATA00 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+
+	MX6_PAD_ENET2_RX_DATA1__ENET2_RDATA01 | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET2_RX_EN__ENET2_RX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_SNVS_TAMPER9__GPIO5_IO09 | MUX_PAD_CTRL(ENET_PAD_CTRL),	/* ENET Reset */
+};
+
+static void setup_iomux_fec(int fec_id)
+{
+	imx_iomux_v3_setup_multiple_pads(fec1_pads, ARRAY_SIZE(fec1_pads));
+	imx_iomux_v3_setup_multiple_pads(fec2_pads, ARRAY_SIZE(fec2_pads));
+
+    gpio_request(IMX_GPIO_NR(5, 9), "reset phy");
+
+	/* Reset the PHY */
+	gpio_direction_output(IMX_GPIO_NR(5, 9) , 0);
+	udelay(50000);
+	gpio_direction_output(IMX_GPIO_NR(5, 9) , 1);
+}
 
 int board_eth_init(bd_t *bis)
 {
 	int ret;
+
+	setup_iomux_fec(CONFIG_FEC_ENET_DEV);
 
 	ret = fecmxc_initialize_multi(bis, CONFIG_FEC_ENET_DEV,
 		CONFIG_FEC_MXC_PHYADDR, IMX_FEC_BASE);
@@ -255,22 +302,11 @@ int board_eth_init(bd_t *bis)
 	return 0;
 }
 
-static void eng_reset_phy(void)
-{
-    /* Reset the PHY */
-    printf("reset phy\n");
-    gpio_request(IMX_GPIO_NR(5, 9) , "reset phy");
-	gpio_direction_output(IMX_GPIO_NR(5, 9) , 0);
-	udelay(50000);
-	gpio_direction_output(IMX_GPIO_NR(5, 9) , 1);
-}
-
 static int setup_fec(int fec_id)
 {
 	struct iomuxc *const iomuxc_regs = (struct iomuxc *)IOMUXC_BASE_ADDR;
 	int ret;
 
-    
 	if (fec_id == 0) {
 		/*
 		 * Use 50M anatop loopback REF_CLK1 for ENET1,
@@ -307,9 +343,6 @@ static int setup_fec(int fec_id)
 
 int board_phy_config(struct phy_device *phydev)
 {
-    eng_reset_phy();
-
-	phy_write(phydev, MDIO_DEVAD_NONE, 0x1f, 0x8190);
 
 	if (phydev->drv->config)
 		phydev->drv->config(phydev);
