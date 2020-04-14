@@ -297,13 +297,13 @@ static int esdhc_setup_data(struct fsl_esdhc_priv *priv, struct mmc *mmc,
 		if (priv->wp_enable) {
 			if ((esdhc_read32(&regs->prsstat) &
 			    PRSSTAT_WPSPL) == 0) {
-				printf("\nThe SD card is locked. Can not write to a locked card.\n\n");
+				printf("\nThe SD card is locked. Can not write to a locked card (1).\n\n");
 				return -ETIMEDOUT;
 			}
 		} else {
 #ifdef CONFIG_DM_GPIO
 			if (dm_gpio_is_valid(&priv->wp_gpio) && dm_gpio_get_value(&priv->wp_gpio)) {
-				printf("\nThe SD card is locked. Can not write to a locked card.\n\n");
+				printf("\nThe SD card is locked. Can not write to a locked card (2).\n\n");
 				return -ETIMEDOUT;
 			}
 #endif

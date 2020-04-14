@@ -1,0 +1,15 @@
+if TARGET_ICOREM6_COMMON
+
+config SYS_BOARD
+	default "icorem6"
+
+config SYS_VENDOR
+	default "engicam"
+
+config SYS_CONFIG_NAME
+	default "icorem6"
+
+config SYS_TEXT_BASE
+    default 0x17800000
+
+endif

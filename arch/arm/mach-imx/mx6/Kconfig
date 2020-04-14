@@ -120,6 +120,14 @@ config MODULE_FUSE
 	  Once the module is checked as fused to disable, this module driver
 	  won't be called. And it will be modified to disable in kernel DTB.
 
+config TARGET_ICOREM6_COMMON
+	bool
+  select BOARD_LATE_INIT
+  select DM
+  select DM_THERMAL
+  select BOARD_EARLY_INIT_F
+  imply CMD_DM
+  
 config TARGET_MX6SABREAUTO_COMMON
     bool
     select BOARD_LATE_INIT
@@ -557,6 +565,12 @@ config TARGET_MX6ULL_14X14_EVK
 	select MX6ULL
 	imply CMD_DM
 
+
+config TARGET_ICOREM6DL
+  bool "Support Engicam ICOREM6DL"
+  select TARGET_ICOREM6_COMMON
+  select MX6DL
+    
 config TARGET_MICROGEA_MX6ULL
 	bool "Support Engicam Microgea"
 	select BOARD_LATE_INIT
@@ -731,6 +745,7 @@ source "board/congatec/cgtqmx6eval/Kconfig"
 source "board/dhelectronics/dh_imx6/Kconfig"
 source "board/el/el6x/Kconfig"
 source "board/embest/mx6boards/Kconfig"
+source "board/engicam/icorem6/Kconfig"
 source "board/engicam/imx6q/Kconfig"
 source "board/engicam/imx6ul/Kconfig"
 source "board/engicam/microgea-mx6ull/Kconfig"

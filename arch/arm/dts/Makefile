@@ -506,6 +506,7 @@ dtb-$(CONFIG_MX6Q) += \
 	imx6q-pop-arm2.dtb
 
 dtb-$(CONFIG_MX6DL) += \
+	icore-mx6dl.dtb \
 	imx6dl-sabreauto.dtb \
 	imx6dl-sabreauto-ecspi.dtb \
 	imx6dl-sabreauto-gpmi-weim.dtb \

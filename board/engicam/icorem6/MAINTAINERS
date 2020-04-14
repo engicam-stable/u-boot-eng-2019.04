@@ -1,0 +1,6 @@
+MX6SABRESD BOARD
+M:	Fabio Estevam <fabio.estevam@nxp.com>
+S:	Maintained
+F:	board/engicam/icorem6/
+F:	include/configs/icorem6.h
+F:	configs/icoremx6dl_sd_defconfig
