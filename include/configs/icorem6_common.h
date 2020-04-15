@@ -179,17 +179,6 @@
   #define CONFIG_SYS_I2C_SPEED		  100000
 #endif
 
-/* Framebuffer */
-#define CONFIG_VIDEO_IPUV3
-#define CONFIG_VIDEO_BMP_RLE8
-#define CONFIG_SPLASH_SCREEN
-#define CONFIG_SPLASH_SCREEN_ALIGN
-#define CONFIG_BMP_16BPP
-#define CONFIG_VIDEO_LOGO
-#define CONFIG_VIDEO_BMP_LOGO
-#define CONFIG_IMX_HDMI
-#define CONFIG_IMX_VIDEO_SKIP
-
 #if defined(CONFIG_ANDROID_SUPPORT)
   #include "mx6sabreandroid_common.h"
 #else
