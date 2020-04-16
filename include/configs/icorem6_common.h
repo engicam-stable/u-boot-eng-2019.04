@@ -59,7 +59,7 @@
   "fdt_high=0xffffffff\0"	  \
   "fdt_addr=0x18000000\0" \
   "console=" CONSOLE_DEV "\0" \
-  "mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
+  "mmcdev=0\0" \
   "mmcpart=1\0" \
   "lcd_panel=Amp-WD\0" 			\
   "video_type=mxcfb0:dev=lcd\0"
@@ -74,11 +74,13 @@
 #define CONFIG_LOAD_IMAGE	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} uImage\0" 
 #define CONFIG_LOAD_FDT	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" 
 #define CONFIG_BOOTARGS_BASE "bootargs_base=setenv bootargs_tmp console=" CONSOLE_DEV ",115200 " EXTRA_OPTION_SOLO " video=${video_type},${lcd_panel}\0" 
-#define CONFIG_BOOTARGS_MMC  "bootargs_mmc=run bootargs_base; setenv bootargs ${bootargs_tmp} ${mtdparts} root=/dev/mmcblk${mmcdev}p2 rootwait rw\0" 
+#define CONFIG_BOOTARGS_MMC  "bootargs_mmc=run bootargs_base; setenv bootargs ${bootargs_tmp} ${mtdparts} root=/dev/mmcblk${mmcdev}p2 rootwait rw\0"
 #define CONFIG_BOOTARGS_NET  "bootargs_net=run bootargs_base; setenv bootargs ${bootargs_tmp} root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" 
 #define CONFIG_BOOTCMD_MMC	 "bootcmd_mmc=setenv mmcdev ${mmcdev}; run bootargs_mmc; " LOAD_BOOT "\0" 
 #define CONFIG_BOOTCMD_NET	 "bootcmd_net=run bootargs_net; tftp uImage; tftp ${fdt_addr} uImage.dtb; bootm ${loadaddr} - ${fdt_addr}\0" 
-
+#define CONFIG_BOOT_CMD "bootcmd=run bootcmd_mmc\0"
+#define CONFIG_FDT_FILE "fdt_file=icoremx6dl-starterkit-cap.dtb\0"  
+  
 #define COMMON_PARAMETER 	""
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
@@ -97,8 +99,8 @@
   CONFIG_BOOTCMD_MMC \
   CONFIG_BOOTCMD_NET \
 	CONFIG_MFG_ENV_SETTINGS \
-	"bootcmd=run bootcmd_mmc\0"\
-	"fdt_file=icoremx6dl-starterkit-cap.dtb\0"
+	CONFIG_BOOT_CMD \
+	CONFIG_FDT_FILE 
 #endif
 
 #define CONFIG_ARP_TIMEOUT     200UL
@@ -143,8 +145,38 @@
 /* DMA stuff, needed for GPMI/MXS NAND support */
 #endif
 
+
+/*
+ OLD UBOOT
 #if defined(CONFIG_ENV_IS_IN_MMC)
-  #define CONFIG_ENV_OFFSET		(896 * 1024)
+#define CONFIG_ENV_OFFSET		(16 * 64 * 1024)
+#elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
+#define CONFIG_ENV_OFFSET		(768 * 1024)
+#define CONFIG_ENV_SECT_SIZE		(64 * 1024)
+#define CONFIG_ENV_SPI_BUS		CONFIG_SF_DEFAULT_BUS
+#define CONFIG_ENV_SPI_CS		CONFIG_SF_DEFAULT_CS
+#define CONFIG_ENV_SPI_MODE		CONFIG_SF_DEFAULT_MODE
+#define CONFIG_ENV_SPI_MAX_HZ		CONFIG_SF_DEFAULT_SPEED
+#elif defined(CONFIG_ENV_IS_IN_FLASH)
+#undef CONFIG_ENV_SIZE
+#define CONFIG_ENV_SIZE			CONFIG_SYS_FLASH_SECT_SIZE
+#define CONFIG_ENV_SECT_SIZE		CONFIG_SYS_FLASH_SECT_SIZE
+#define CONFIG_ENV_OFFSET		(4 * CONFIG_SYS_FLASH_SECT_SIZE)
+#elif defined(CONFIG_ENV_IS_IN_NAND)
+#undef CONFIG_ENV_SIZE
+#define CONFIG_ENV_OFFSET		(0x1c0000)
+#define CONFIG_ENV_SECT_SIZE		(0x20000)
+#define CONFIG_ENV_SIZE			CONFIG_ENV_SECT_SIZE
+#elif defined(CONFIG_ENV_IS_IN_SATA)
+#define CONFIG_ENV_OFFSET		(768 * 1024)
+#define CONFIG_SATA_ENV_DEV		0
+#define CONFIG_SYS_DCACHE_OFF /
+#endif
+*/
+#undef CONFIG_ENV_OFFSET
+
+#if defined(CONFIG_ENV_IS_IN_MMC)
+  #define CONFIG_ENV_OFFSET		(16 * 64 * 1024)
 #elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
   #define CONFIG_ENV_OFFSET              (896 * 1024)
   #define CONFIG_ENV_SECT_SIZE           (64 * 1024)

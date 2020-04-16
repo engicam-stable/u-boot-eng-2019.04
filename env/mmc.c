@@ -26,6 +26,10 @@
 #error CONFIG_ENV_SIZE_REDUND should be the same as CONFIG_ENV_SIZE
 #endif
 
+#ifdef CONFIG_TARGET_ICOREM6_COMMON  
+extern int board_mmc_get_env_dev(int devno);
+#endif
+
 DECLARE_GLOBAL_DATA_PTR;
 
 #if !defined(CONFIG_ENV_OFFSET)
@@ -39,7 +43,12 @@ static inline int mmc_offset_try_partition(const char *str, s64 *val)
 	struct blk_desc *desc;
 	int len, i, ret;
 
-	ret = blk_get_device_by_str("mmc", STR(CONFIG_SYS_MMC_ENV_DEV), &desc);
+#ifdef CONFIG_TARGET_ICOREM6_COMMON  
+	ret = blk_get_device_by_str("mmc", STR(mmc_get_env_dev()), &desc);
+#else
+  ret = blk_get_device_by_str("mmc", STR(CONFIG_SYS_MMC_ENV_DEV), &desc);
+#endif
+  
 	if (ret < 0)
 		return (ret);
 
@@ -124,7 +133,11 @@ __weak int mmc_get_env_addr(struct mmc *mmc, int copy, u32 *env_addr)
 
 __weak int mmc_get_env_dev(void)
 {
+#ifdef CONFIG_TARGET_ICOREM6_COMMON  
+  return board_mmc_get_env_dev(-1);
+#else
 	return CONFIG_SYS_MMC_ENV_DEV;
+#endif
 }
 
 #ifdef CONFIG_SYS_MMC_ENV_PART

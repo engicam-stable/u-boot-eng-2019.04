@@ -473,8 +473,13 @@ static int do_mmc_part(cmd_tbl_t *cmdtp, int flag,
 	puts("get mmc type error!\n");
 	return CMD_RET_FAILURE;
 }
+#ifdef CONFIG_TARGET_ICOREM6_COMMON
+int do_mmc_dev(cmd_tbl_t *cmdtp, int flag,
+		      int argc, char * const argv[])
+#else
 static int do_mmc_dev(cmd_tbl_t *cmdtp, int flag,
 		      int argc, char * const argv[])
+#endif
 {
 	int dev, part = 0, ret;
 	struct mmc *mmc;

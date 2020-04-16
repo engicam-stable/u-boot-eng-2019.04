@@ -14,10 +14,10 @@
 };
 
 
-&usdhc2 {
+&usdhc3 {
 	u-boot,dm-spl;
 };
 
-&pinctrl_usdhc2 {
+&pinctrl_usdhc3 {
 	u-boot,dm-spl;
 };

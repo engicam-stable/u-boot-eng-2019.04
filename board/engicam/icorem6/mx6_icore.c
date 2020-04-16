@@ -47,6 +47,10 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+void set_current_mmc(void);
+extern int do_mmc_dev(cmd_tbl_t *cmdtp, int flag,
+		      int argc, char * const argv[]);
+
 #define EDIMM_VERSION IMX_GPIO_NR(6, 31)
 
 #define UART_PAD_CTRL  (PAD_CTL_PUS_100K_UP |			\
@@ -158,11 +162,10 @@ static iomux_v3_cfg_t const usdhc1_pads[] = {
 };
 
 #ifdef CONFIG_NAND_MXS
-iomux_v3_cfg_t const usdhc2_pads[] = {
+iomux_v3_cfg_t const usdhc3_pads[] = {
 };
-
 #else	/* eMMC version */
-iomux_v3_cfg_t const usdhc2_pads[] = {
+iomux_v3_cfg_t const usdhc3_pads[] = {
 	IOMUX_PADS(PAD_SD3_RST__SD3_RESET | MUX_PAD_CTRL(USDHC_PAD_CTRL)),
 	IOMUX_PADS(PAD_SD3_CLK__SD3_CLK | MUX_PAD_CTRL(USDHC_PAD_CTRL)),
 	IOMUX_PADS(PAD_SD3_CMD__SD3_CMD | MUX_PAD_CTRL(USDHC_PAD_CTRL)),
@@ -370,9 +373,8 @@ int board_mmc_init(bd_t *bis)
 	/*
 	 * According to the board_mmc_init() the following map is done:
 	 * (U-Boot device node)    (Physical Port)
-	 * mmc0                    SD2
-	 * mmc1                    SD3
-	 * mmc2                    eMMC
+	 * mmc0                    SD
+	 * mmc1                    eMMC
 	 */
 	for (i = 0; i < CONFIG_SYS_FSL_USDHC_NUM; i++) {
 		switch (i) {
@@ -383,7 +385,7 @@ int board_mmc_init(bd_t *bis)
 			usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
 			break;
 		case 1:
-			SETUP_IOMUX_PADS(usdhc2_pads);
+			SETUP_IOMUX_PADS(usdhc3_pads);
 			usdhc_cfg[1].sdhc_clk = mxc_get_clock(MXC_ESDHC3_CLK);
 			break;
 		/*case 2:
@@ -404,6 +406,7 @@ int board_mmc_init(bd_t *bis)
 
 	return 0;
 #else
+
 	struct src *psrc = (struct src *)SRC_BASE_ADDR;
 	unsigned reg = readl(&psrc->sbmr1) >> 11;
 	/*
@@ -423,7 +426,7 @@ int board_mmc_init(bd_t *bis)
 		gd->arch.sdhc_clk = usdhc_cfg[0].sdhc_clk;
 		break;
 	case 0x2:
-		SETUP_IOMUX_PADS(usdhc2_pads);
+		SETUP_IOMUX_PADS(usdhc3_pads);
 		usdhc_cfg[0].esdhc_base = USDHC3_BASE_ADDR;
 		usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC3_CLK);
 		gd->arch.sdhc_clk = usdhc_cfg[0].sdhc_clk;
@@ -788,6 +791,21 @@ static void setup_display(void)
 }
 #endif /* CONFIG_VIDEO_IPUV3 */
 
+int board_mmc_get_env_dev(int devno)
+{
+	u32 soc_sbmr = readl(SRC_BASE_ADDR + 0x4);
+	u32 dev_no;
+
+	/* BOOT_CFG2[3] and BOOT_CFG2[4] */
+	dev_no = (soc_sbmr & 0x00001800) >> 11;
+
+  /* need ubstract 1 to map to the mmc3 device id
+	 * see the comments in board_mmc_init function
+	 */
+	
+	return dev_no;
+}
+
 /*
  * Do not overwrite the console
  * Use always serial for U-Boot console
@@ -855,7 +873,6 @@ static int enable_enet_clock(void)
 int board_eth_init(bd_t *bis)
 {
   int ret, reg;
-printf("%s\n", __func__);
 	struct iomuxc *iomux = (struct iomuxc *)IOMUXC_BASE_ADDR;
 
 	udelay(100000);
@@ -964,11 +981,15 @@ int board_init(void)
   
   gpio_request(EDIMM_VERSION, "EDIMM Module");
 	gpio_direction_input(EDIMM_VERSION);
-  if(gpio_get_value(EDIMM_VERSION))
+  if (gpio_get_value(EDIMM_VERSION))
+  {
 		printf("EDIMM Module: 1.0\n");
+  }
 	else
+  {
 		printf("EDIMM Module: 1.5\n");
-
+  }
+  
 	return 0;
 }
 
@@ -1349,11 +1370,15 @@ static const struct boot_mode board_boot_modes[] = {
 
 int board_late_init(void)
 {
+char buff[5];  
+
 #ifdef CONFIG_CMD_BMODE
 	add_board_boot_modes(board_boot_modes);
 #endif
 
-	env_set("tee", "no");
+  sprintf(buff, "%d", board_mmc_get_env_dev(-1));
+  env_set("mmcdev", buff);
+  
 #ifdef CONFIG_IMX_OPTEE
 	env_set("tee", "yes");
 #endif
@@ -1372,8 +1397,26 @@ int board_late_init(void)
 #ifdef CONFIG_ENV_IS_IN_MMC
 	board_late_mmc_env_init();
 #endif
-
+  
+  set_current_mmc();
+  
 	return 0;
+}
+
+void set_current_mmc(void)
+{
+  char *fs_argv[2];
+  char buff[5];  
+  
+  sprintf(buff, "%d", board_mmc_get_env_dev(-1));
+  
+  fs_argv[0] = "mmc";
+  fs_argv[1] = buff;  
+  printf("SETCURRE_MVV %s\n", buff);
+  if (do_mmc_dev(NULL, 0, 2, fs_argv)) 
+  {
+		printf("Error to switch MMC %s\n", buff);
+	}
 }
 
 int checkboard(void)

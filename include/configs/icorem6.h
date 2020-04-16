@@ -35,14 +35,26 @@
 #define CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS (CONFIG_CMD_SPL_WRITE_SIZE / 512)
 #define CONFIG_SYS_MMCSD_RAW_MODE_KERNEL_SECTOR        0x1000  /* 2MB */
 
+// SE NAND=1 /* TODO */
+#define CONFIG_SYS_FSL_USDHC_NUM	2
+
+/*
+#ifndef CONFIG_BOOT_FROM_EMMC
+	#define CONFIG_SYS_MMC_ENV_DEV		0   // USDHC1 
+#else  // 
+	#define CONFIG_SYS_MMC_ENV_DEV	2  // USDHC3 
+#endif
+*/
+/*
 #define CONFIG_SYS_FSL_USDHC_NUM	1
-#define CONFIG_MMCROOT			"/dev/mmcblk0p2"  /* SDHC1 */
+#define CONFIG_MMCROOT		
 #if defined(CONFIG_ENV_IS_IN_MMC)
 #define CONFIG_SYS_MMC_ENV_DEV  0
 #ifndef CONFIG_SYS_MMC_ENV_PART
-#define CONFIG_SYS_MMC_ENV_PART 0       /* user partition */
+#define CONFIG_SYS_MMC_ENV_PART 0    
 #endif
 #endif
+*/
 
 /*
  * imx6 q/dl/solo pcie would be failed to work properly in kernel, if
