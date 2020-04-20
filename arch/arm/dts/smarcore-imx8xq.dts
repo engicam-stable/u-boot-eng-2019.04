@@ -39,13 +39,10 @@
 
 		reg_usdhc2_vmmc: usdhc2_vmmc {
 			compatible = "regulator-fixed";
-			regulator-name = "SD1_SPWR";
-			regulator-min-microvolt = <3000000>;
-			regulator-max-microvolt = <3000000>;
-			gpio = <&gpio4 19 GPIO_ACTIVE_HIGH>;
+			regulator-name = "usdhc2_vmmc";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
 			enable-active-high;
-			startup-delay-us = <300>;
-			u-boot,off-on-delay-us = <5000>;
 		};
 	};
 };
@@ -174,8 +171,6 @@
 
 		pinctrl_usdhc2_gpio: usdhc2gpiogrp {
 			fsl,pins = <
-				SC_P_USDHC1_RESET_B_LSIO_GPIO4_IO19	0x00000021
-				SC_P_USDHC1_WP_LSIO_GPIO4_IO21		0x00000021
 				SC_P_USDHC1_CD_B_LSIO_GPIO4_IO22	0x00000021
 			>;
 		};
@@ -408,13 +403,12 @@
 };
 
 &usdhc2 {
-	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-	bus-width = <4>;
 	cd-gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
-	wp-gpios = <&gpio4 21 GPIO_ACTIVE_HIGH>;
+	max-frequency = <50000000>;
+	bus-width = <4>;
+	no-1-8-v;
 	vmmc-supply = <&reg_usdhc2_vmmc>;
 	status = "okay";
 };
