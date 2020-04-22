@@ -1412,7 +1412,6 @@ void set_current_mmc(void)
   
   fs_argv[0] = "mmc";
   fs_argv[1] = buff;  
-  printf("SETCURRE_MVV %s\n", buff);
   if (do_mmc_dev(NULL, 0, 2, fs_argv)) 
   {
 		printf("Error to switch MMC %s\n", buff);

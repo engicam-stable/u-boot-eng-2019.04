@@ -6,6 +6,7 @@
 #include "imx6qdl-u-boot.dtsi"
 
 &usdhc1 {
+  no-1-8-v;
 	u-boot,dm-spl;
 };
 
@@ -15,6 +16,7 @@
 
 
 &usdhc3 {
+  no-1-8-v;
 	u-boot,dm-spl;
 };
 

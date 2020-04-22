@@ -75,8 +75,8 @@
   #define EXTRA_OPTION_SOLO ""
 #endif
 
-#define LOAD_BOOT  "run loadfdt; run loadimage; bootm ${loadaddr} - ${fdt_addr}" 
-#define CONFIG_LOAD_IMAGE	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} uImage\0" 
+#define LOAD_BOOT  "run loadfdt; run loadzImage; bootz ${loadaddr} - ${fdt_addr}" 
+#define CONFIG_LOAD_IMAGE	"loadzImage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} zImage\0" 
 #define CONFIG_LOAD_FDT	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" 
 #define CONFIG_BOOTARGS_BASE "bootargs_base=setenv bootargs_tmp console=" CONSOLE_DEV ",115200 " EXTRA_OPTION_SOLO " video=${video_type},${lcd_panel}\0" 
 #define CONFIG_BOOTARGS_MMC  "bootargs_mmc=run bootargs_base; setenv bootargs ${bootargs_tmp} ${mtdparts} root=/dev/mmcblk${mmcdev}p2 rootwait rw\0"
@@ -84,7 +84,7 @@
 #define CONFIG_BOOTCMD_MMC	 "bootcmd_mmc=setenv mmcdev ${mmcdev}; run bootargs_mmc; " LOAD_BOOT "\0" 
 #define CONFIG_BOOTCMD_NET	 "bootcmd_net=run bootargs_net; tftp uImage; tftp ${fdt_addr} uImage.dtb; bootm ${loadaddr} - ${fdt_addr}\0" 
 #define CONFIG_BOOT_CMD "bootcmd=run bootcmd_mmc\0"
-#define CONFIG_FDT_FILE "fdt_file=icoremx6dl-starterkit-cap.dtb\0"  
+#define CONFIG_FDT_FILE "fdt_file=icore-mx6dl-starterkit-cap.dtb\0"  
   
 #define COMMON_PARAMETER 	""
 
