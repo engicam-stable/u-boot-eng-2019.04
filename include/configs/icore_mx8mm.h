@@ -255,10 +255,8 @@
 #define CONFIG_SYS_SDRAM_BASE           0x40000000
 #define PHYS_SDRAM                      0x40000000
 /*#define DRAM_2GB_SAMSUNG*/
-#ifdef DRAM_2GB_SAMSUNG
+#ifdef CONFIG_TARGET_ICORE_MX8MM_2GB
   #define PHYS_SDRAM_SIZE			0x80000000 /* 2GB DDR total */
-  #define PHYS_SDRAM_2_SIZE			0x40000000 /* 1GB DDR */
-  #define CONFIG_NR_DRAM_BANKS		2
 #else
 /* Configuration for 1GB default DDR4 size */
   #define PHYS_SDRAM_SIZE			0x40000000 /* 1GB DDR */
