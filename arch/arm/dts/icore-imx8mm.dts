@@ -79,7 +79,7 @@
 				MX8MM_IOMUXC_ENET_RXC_ENET1_RGMII_RXC	0x91
 				MX8MM_IOMUXC_ENET_RX_CTL_ENET1_RGMII_RX_CTL	0x91
 				MX8MM_IOMUXC_ENET_TX_CTL_ENET1_RGMII_TX_CTL	0x1f
-				MX8MM_IOMUXC_NAND_DATA01_GPIO3_IO7	0x19
+				//MX8MM_IOMUXC_NAND_DATA01_GPIO3_IO7	0x19
 			>;
 		};
 
@@ -514,7 +514,8 @@
 	phy-handle = <&ethphy0>;
 	fsl,magic-packet;
 	status = "okay";
-
+  phy-reset-gpios = <&gpio3 7 GPIO_ACTIVE_LOW>;
+  
 	mdio {
 		#address-cells = <1>;
 		#size-cells = <0>;
