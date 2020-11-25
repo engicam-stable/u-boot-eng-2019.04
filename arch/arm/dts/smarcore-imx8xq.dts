@@ -80,37 +80,6 @@
 			>;
 		};
 
-		pinctrl_fec2: fec2grp {
-			fsl,pins = <
-				SC_P_ESAI0_SCKR_CONN_ENET1_RGMII_TX_CTL		0x00000060
-				SC_P_ESAI0_FSR_CONN_ENET1_RGMII_TXC		0x00000060
-				SC_P_ESAI0_TX4_RX1_CONN_ENET1_RGMII_TXD0	0x00000060
-				SC_P_ESAI0_TX5_RX0_CONN_ENET1_RGMII_TXD1	0x00000060
-				SC_P_ESAI0_FST_CONN_ENET1_RGMII_TXD2		0x00000060
-				SC_P_ESAI0_SCKT_CONN_ENET1_RGMII_TXD3		0x00000060
-				SC_P_ESAI0_TX0_CONN_ENET1_RGMII_RXC		0x00000060
-				SC_P_SPDIF0_TX_CONN_ENET1_RGMII_RX_CTL		0x00000060
-				SC_P_SPDIF0_RX_CONN_ENET1_RGMII_RXD0		0x00000060
-				SC_P_ESAI0_TX3_RX2_CONN_ENET1_RGMII_RXD1	0x00000060
-				SC_P_ESAI0_TX2_RX3_CONN_ENET1_RGMII_RXD2	0x00000060
-				SC_P_ESAI0_TX1_CONN_ENET1_RGMII_RXD3		0x00000060
-			>;
-		};
-
-		pinctrl_lpi2c1: lpi1cgrp {
-			fsl,pins = <
-				SC_P_USB_SS3_TC1_ADMA_I2C1_SCL	0x06000021
-				SC_P_USB_SS3_TC3_ADMA_I2C1_SDA	0x06000021
-			>;
-		};
-
-		pinctrl_lpi2c3: lpi2cgrp {
-			fsl,pins = <
-				SC_P_SPI3_CS1_ADMA_I2C3_SCL	0x06000020
-				SC_P_MCLK_IN1_ADMA_I2C3_SDA	0x06000020
-			>;
-		};
-
 		pinctrl_lpuart0: lpuart0grp {
 			fsl,pins = <
 				SC_P_UART0_RX_ADMA_UART0_RX	0x0600002c
@@ -210,41 +179,6 @@
 				SC_P_USDHC1_VSELECT_CONN_USDHC1_VSELECT	0x00000020
 			>;
 		};
-
-		pinctrl_flexspi0: flexspi0grp {
-			fsl,pins = <
-				SC_P_QSPI0A_DATA0_LSIO_QSPI0A_DATA0	0x06000021
-				SC_P_QSPI0A_DATA1_LSIO_QSPI0A_DATA1	0x06000021
-				SC_P_QSPI0A_DATA2_LSIO_QSPI0A_DATA2	0x06000021
-				SC_P_QSPI0A_DATA3_LSIO_QSPI0A_DATA3	0x06000021
-				SC_P_QSPI0A_DQS_LSIO_QSPI0A_DQS		0x06000021
-				SC_P_QSPI0A_SS0_B_LSIO_QSPI0A_SS0_B	0x06000021
-				SC_P_QSPI0A_SS1_B_LSIO_QSPI0A_SS1_B	0x06000021
-				SC_P_QSPI0A_SCLK_LSIO_QSPI0A_SCLK	0x06000021
-				SC_P_QSPI0B_SCLK_LSIO_QSPI0B_SCLK	0x06000021
-				SC_P_QSPI0B_DATA0_LSIO_QSPI0B_DATA0	0x06000021
-				SC_P_QSPI0B_DATA1_LSIO_QSPI0B_DATA1	0x06000021
-				SC_P_QSPI0B_DATA2_LSIO_QSPI0B_DATA2	0x06000021
-				SC_P_QSPI0B_DATA3_LSIO_QSPI0B_DATA3	0x06000021
-				SC_P_QSPI0B_DQS_LSIO_QSPI0B_DQS		0x06000021
-				SC_P_QSPI0B_SS0_B_LSIO_QSPI0B_SS0_B	0x06000021
-				SC_P_QSPI0B_SS1_B_LSIO_QSPI0B_SS1_B	0x06000021
-			>;
-		};
-
-		pinctrl_i2c0_mipi_lvds0: mipi_lvds0_i2c0_grp {
-			fsl,pins = <
-				SC_P_MIPI_DSI0_I2C0_SCL_MIPI_DSI0_I2C0_SCL 0xc6000020
-				SC_P_MIPI_DSI0_I2C0_SDA_MIPI_DSI0_I2C0_SDA 0xc6000020
-			>;
-		};
-
-		pinctrl_i2c0_mipi_lvds1: mipi_lvds1_i2c0_grp {
-			fsl,pins = <
-				SC_P_MIPI_DSI1_I2C0_SCL_MIPI_DSI1_I2C0_SCL 0xc6000020
-				SC_P_MIPI_DSI1_I2C0_SDA_MIPI_DSI1_I2C0_SDA 0xc6000020
-			>;
-		};
 	};
 };
 
@@ -294,96 +228,27 @@
 };
 
 &fec2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_fec2>;
-	phy-mode = "rgmii-txid";
-	phy-handle = <&ethphy1>;
-	fsl,magic-packet;
-	fsl,rgmii_rxc_dly;
 	status = "disabled";
-	phy-reset-gpios = <&pca9557_a 4 GPIO_ACTIVE_LOW>;
-	phy-reset-duration = <10>;
-	phy-reset-post-delay = <150>;
 };
 
 &flexspi0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_flexspi0>;
-	status = "okay";
-
-	flash0: mt35xu512aba@0 {
-		reg = <0>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-		compatible = "spi-flash";
-		spi-max-frequency = <29000000>;
-		spi-nor,ddr-quad-read-dummy = <8>;
-	};
+	status = "disabled";
 };
 
 &i2c1 {
-	clock-frequency = <100000>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_lpi2c1>;
-	status = "okay";
+	status = "disabled";
 };
 
 &i2c3 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	clock-frequency = <100000>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_lpi2c3>;
-	status = "okay";
-
-	pca9557_a: gpio@18 {
-		compatible = "nxp,pca9557";
-		reg = <0x18>;
-		gpio-controller;
-		#gpio-cells = <2>;
-	};
-
-	pca9557_b: gpio@19 {
-		compatible = "nxp,pca9557";
-		reg = <0x19>;
-		gpio-controller;
-		#gpio-cells = <2>;
-	};
-
-	pca9557_c: gpio@1b {
-		compatible = "nxp,pca9557";
-		reg = <0x1b>;
-		gpio-controller;
-		#gpio-cells = <2>;
-	};
+	status = "disabled";
 };
 
 &i2c0_mipi_lvds0 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_i2c0_mipi_lvds0>;
-	clock-frequency = <100000>;
-	status = "okay";
-
-	it6263-0@4c {
-		compatible = "ITE,it6263";
-		reg = <0x4c>;
-	};
+	status = "disabled";
 };
 
 &i2c0_mipi_lvds1 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_i2c0_mipi_lvds1>;
-	clock-frequency = <100000>;
-	status = "okay";
-
-	it6263-1@4c {
-		compatible = "ITE,it6263";
-		reg = <0x4c>;
-	};
+	status = "disabled";
 };
 
 &lpuart0 {

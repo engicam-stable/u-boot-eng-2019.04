@@ -359,6 +359,9 @@ int board_ehci_usb_phy_mode(struct udevice *dev)
 
 int board_init(void)
 {
+	gpio_request(IMX_GPIO_NR(1, 2), "RESET");
+	gpio_direction_output(IMX_GPIO_NR(1, 2), 1);
+	
 #ifdef CONFIG_USB_TCPC
 	setup_typec();
 #endif
